@@ -1,5 +1,6 @@
 import Footer from "./components/Footer.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
 import { useState } from "react";
 import "./App.css";
 
@@ -42,19 +43,7 @@ const products = [
     <div className="app" id="home">
      <Navbar />
 
-      <section className="hero">
-        <h1>DEEZ TEEZ</h1>
-        <h2>Wear Your Motivation.</h2>
-
-        <p>
-          Premium motivational apparel designed to inspire greatness,
-          confidence, and success.
-        </p>
-
-        <a className="shop-button" href="#shop">
-  SHOP NOW
-</a>
-      </section>
+     <Hero /> 
 
       <section className="collection" id="shop">
         <h2>Featured Collection</h2>
