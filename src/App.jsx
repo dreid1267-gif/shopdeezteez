@@ -2,6 +2,7 @@ import Footer from "./components/Footer.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
 import FeaturedCollection from "./components/FeaturedCollection.jsx";
+import About from "./components/About.jsx";
 import { useState } from "react";
 import "./App.css";
 
@@ -53,22 +54,7 @@ const products = [
   setShirtStyle={setShirtStyle}
   products={products}
 /> 
-      <section className="about">
-  <p className="about-label">THE DEEZ TEEZ STORY</p>
-
-  <h2>MORE THAN APPAREL. IT’S A MOVEMENT.</h2>
-
-  <p>
-    Deez Teez creates premium motivational apparel for people who choose
-    confidence, purpose, and greatness. Every design is made to inspire you
-    and everyone around you.
-  </p>
-
-  <p>
-    We believe what you wear can remind you who you are, where you are going,
-    and what you are capable of becoming.
-  </p>
-</section>
+ <About />     
 
 <section className="benefits">
   <p className="benefits-label">WHY CHOOSE DEEZ TEEZ?</p>
