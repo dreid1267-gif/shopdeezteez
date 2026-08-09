@@ -584,4 +584,31 @@ button:hover {
 
 .cart-close:hover {
   color: #d4af37;
+}.cart-summary {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+.cart-summary h3 {
+  color: #d4af37;
+  font-size: 20px;
+  margin-bottom: 18px;
+}
+
+.checkout-button {
+  width: 100%;
+  padding: 15px;
+  background: #d4af37;
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.checkout-button:hover {
+  opacity: 0.9;
 }

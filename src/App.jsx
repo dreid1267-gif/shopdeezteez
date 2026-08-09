@@ -80,7 +80,8 @@ const products = [
     {cart.length === 0 ? (
       <p>Your cart is empty.</p>
     ) : (
-      cart.map((item, index) => (
+      <>
+  {cart.map((item, index) => (
         <div className="cart-item" key={`${item.name}-${index}`}>
           <img
             src={item.image}
@@ -104,8 +105,26 @@ const products = [
 </button>
           </div>
         </div>
-      ))
-    )}
+      ))}
+
+  <div className="cart-summary">
+    <h3>
+      Total: $
+      {cart
+        .reduce(
+          (total, item) =>
+            total + Number(item.price.replace("$", "")),
+          0
+        )
+        .toFixed(2)}
+    </h3>
+
+    <button className="checkout-button">
+      CHECKOUT
+    </button>
+  </div>
+</>
+)}
   </div>
 )}
 
