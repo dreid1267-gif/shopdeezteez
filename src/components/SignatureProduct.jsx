@@ -7,6 +7,7 @@ function SignatureProduct({
   setShirtSize,
   shirtColor,
   setShirtColor,
+  addSignatureToCart,
 }) {
   return (
     <div className="card signature-card">
@@ -84,7 +85,7 @@ function SignatureProduct({
 
       <span className="product-price">{signaturePrice}</span>
 
-      <button>ADD TO CART</button>
+      <button onClick={addSignatureToCart}>ADD TO CART</button>
     </div>
   );
 }

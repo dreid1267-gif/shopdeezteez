@@ -9,6 +9,7 @@ function FeaturedCollection({
   setShirtSize,
   shirtColor,
   setShirtColor,
+  addSignatureToCart,
   products,
 }) {
   return (
@@ -25,6 +26,7 @@ function FeaturedCollection({
           setShirtSize={setShirtSize}
           shirtColor={shirtColor}
           setShirtColor={setShirtColor}
+          addSignatureToCart={addSignatureToCart}
         />
 
         {products.map((product) => (

@@ -11,7 +11,20 @@ import "./App.css";
 function App() {
 const [shirtStyle, setShirtStyle] = useState("front-only");
 const [shirtSize, setShirtSize] = useState("M");
-const [shirtColor, setShirtColor] = useState("Black"); 
+const [shirtColor, setShirtColor] = useState("Black");
+ const [cart, setCart] = useState([]);
+ const addSignatureToCart = () => {
+  const item = {
+    name: "BLESSED & HIGHLY FLAVORED!!!",
+    style: shirtStyle,
+    size: shirtSize,
+    color: shirtColor,
+    price: signaturePrice,
+    image: signatureImage,
+  };
+
+  setCart([...cart, item]);
+};
 
   const signatureImage =
     shirtStyle === "front-only"
@@ -47,7 +60,7 @@ const products = [
 
   return (
     <div className="app" id="home">
-     <Navbar />
+     <Navbar cartCount={cart.length} />
 
      <Hero /> 
 
@@ -60,6 +73,7 @@ const products = [
   setShirtSize={setShirtSize}
   shirtColor={shirtColor}
   setShirtColor={setShirtColor}
+  addSignatureToCart={addSignatureToCart}
   products={products}
 />  
  <About />     
