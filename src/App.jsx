@@ -13,6 +13,7 @@ const [shirtStyle, setShirtStyle] = useState("front-only");
 const [shirtSize, setShirtSize] = useState("M");
 const [shirtColor, setShirtColor] = useState("Black");
  const [cart, setCart] = useState([]);
+ const [isCartOpen, setIsCartOpen] = useState(false);
  const addSignatureToCart = () => {
   const item = {
     name: "BLESSED & HIGHLY FLAVORED!!!",
@@ -60,7 +61,45 @@ const products = [
 
   return (
     <div className="app" id="home">
-     <Navbar cartCount={cart.length} />
+     <Navbar
+  cartCount={cart.length}
+  onCartClick={() => setIsCartOpen(!isCartOpen)}
+/>
+
+{isCartOpen && (
+ <div className="cart-panel">
+  <button
+    className="cart-close"
+    onClick={() => setIsCartOpen(false)}
+  >
+    ×
+  </button>
+
+  <h2>Your Cart</h2>
+
+    {cart.length === 0 ? (
+      <p>Your cart is empty.</p>
+    ) : (
+      cart.map((item, index) => (
+        <div className="cart-item" key={`${item.name}-${index}`}>
+          <img
+            src={item.image}
+            alt={item.name}
+            className="cart-item-image"
+          />
+
+          <div>
+            <h3>{item.name}</h3>
+            <p>Style: {item.style}</p>
+            <p>Size: {item.size}</p>
+            <p>Color: {item.color}</p>
+            <p>Price: {item.price}</p>
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+)}
 
      <Hero /> 
 

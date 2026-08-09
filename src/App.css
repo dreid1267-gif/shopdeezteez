@@ -527,3 +527,61 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.cart-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  max-width: 90%;
+  height: 100vh;
+  background: #111;
+  color: white;
+  padding: 30px;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.cart-panel h2 {
+  color: #d4af37;
+  margin-bottom: 25px;
+}
+
+.cart-item {
+  display: flex;
+  gap: 15px;
+  padding: 20px 0;
+  border-bottom: 1px solid #333;
+}
+
+.cart-item-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cart-item h3 {
+  color: #d4af37;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.cart-item p {
+  margin: 5px 0;
+  font-size: 14px;
+}.cart-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.cart-close:hover {
+  color: #d4af37;
+}

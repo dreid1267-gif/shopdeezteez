@@ -1,4 +1,4 @@
-function Navbar({ cartCount }) {
+function Navbar({ cartCount, onCartClick }) {
   return (
     <nav className="navbar">
       <h2 className="logo">DEEZ TEEZ</h2>
@@ -16,9 +16,9 @@ function Navbar({ cartCount }) {
         <li>About</li>
         <li>Contact</li>
       </ul>
-      <div className="cart-count">
+      <button className="cart-count" onClick={onCartClick}>
   CART ({cartCount})
-</div>
+</button>
     </nav>
   );
 }
