@@ -94,6 +94,14 @@ const products = [
             <p>Size: {item.size}</p>
             <p>Color: {item.color}</p>
             <p>Price: {item.price}</p>
+            <button
+  className="remove-item"
+  onClick={() =>
+    setCart(cart.filter((_, itemIndex) => itemIndex !== index))
+  }
+>
+  REMOVE
+</button>
           </div>
         </div>
       ))
