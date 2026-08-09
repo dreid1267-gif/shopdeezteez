@@ -9,7 +9,9 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [shirtStyle, setShirtStyle] = useState("front-only");
+const [shirtStyle, setShirtStyle] = useState("front-only");
+const [shirtSize, setShirtSize] = useState("M");
+const [shirtColor, setShirtColor] = useState("Black"); 
 
   const signatureImage =
     shirtStyle === "front-only"
@@ -49,13 +51,17 @@ const products = [
 
      <Hero /> 
 
-     <FeaturedCollection
+  <FeaturedCollection
   signatureImage={signatureImage}
   signaturePrice={signaturePrice}
   shirtStyle={shirtStyle}
   setShirtStyle={setShirtStyle}
+  shirtSize={shirtSize}
+  setShirtSize={setShirtSize}
+  shirtColor={shirtColor}
+  setShirtColor={setShirtColor}
   products={products}
-/> 
+/>  
  <About />     
 
 <Benefits />
