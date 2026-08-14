@@ -34,8 +34,8 @@ const addProductToCart = (product) => {
   const item = {
     name: product.name,
     style: "standard",
-    size: "M",
-    color: "Black",
+    size: product.size,
+    color: product.color,
     price: product.price,
     image: product.image,
   };

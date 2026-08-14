@@ -1,5 +1,5 @@
 import SignatureProduct from "./SignatureProduct.jsx";
-
+import StandardProductCard from "./StandardProductCard.jsx";
 function FeaturedCollection({
   signatureImage,
   signaturePrice,
@@ -30,24 +30,13 @@ function FeaturedCollection({
           addSignatureToCart={addSignatureToCart}
         />
 
-        {products.map((product) => (
-          <div className="card" key={product.name}>
-            {product.image && (
-              <img
-                className="product-image"
-                src={product.image}
-                alt={product.name}
-              />
-            )}
-
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            <span>{product.price}</span>
-            <button onClick={() => addProductToCart(product)}>
-  BUY NOW
-</button>
-          </div>
-        ))}
+       {products.map((product) => (
+  <StandardProductCard
+    key={product.name}
+    product={product}
+    addProductToCart={addProductToCart}
+  />
+))} 
       </div>
     </section>
   );
