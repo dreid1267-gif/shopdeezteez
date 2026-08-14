@@ -14,6 +14,9 @@ const [shirtSize, setShirtSize] = useState("M");
 const [shirtColor, setShirtColor] = useState("Black");
  const [cart, setCart] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
+ 
+ const checkoutSuccess =
+  new URLSearchParams(window.location.search).get("checkout") === "success";
  const addSignatureToCart = () => {
   const item = {
     name: "BLESSED & HIGHLY FLAVORED!!!",
@@ -65,6 +68,14 @@ const products = [
   cartCount={cart.length}
   onCartClick={() => setIsCartOpen(!isCartOpen)}
 />
+{checkoutSuccess && (
+  <div className="checkout-success">
+    <h2>THANK YOU FOR YOUR ORDER!</h2>
+    <p>Your payment was successful.</p>
+    <p>We're getting your DEEZ TEEZ order ready.</p>
+    <strong>Wear Your Motivation.</strong>
+  </div>
+)}
 
 {isCartOpen && (
  <div className="cart-panel">

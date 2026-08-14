@@ -611,4 +611,32 @@ button:hover {
 
 .checkout-button:hover {
   opacity: 0.9;
+}.checkout-success {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 35px 30px;
+  text-align: center;
+  background: #111;
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+}
+
+.checkout-success h2 {
+  color: #d4af37;
+  font-size: 30px;
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+}
+
+.checkout-success p {
+  color: #fff;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.checkout-success strong {
+  display: block;
+  color: #d4af37;
+  font-size: 18px;
+  margin-top: 20px;
 }
