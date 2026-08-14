@@ -119,9 +119,33 @@ const products = [
         .toFixed(2)}
     </h3>
 
-    <button className="checkout-button">
-      CHECKOUT
-    </button>
+   <button
+  className="checkout-button"
+  onClick={async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:4242/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cart }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+    }
+  }}
+>
+  CHECKOUT
+</button> 
   </div>
 </>
 )}
