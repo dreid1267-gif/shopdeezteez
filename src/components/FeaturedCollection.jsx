@@ -10,6 +10,7 @@ function FeaturedCollection({
   shirtColor,
   setShirtColor,
   addSignatureToCart,
+  addProductToCart,
   products,
 }) {
   return (
@@ -42,7 +43,9 @@ function FeaturedCollection({
             <h3>{product.name}</h3>
             <p>{product.description}</p>
             <span>{product.price}</span>
-            <button>BUY NOW</button>
+            <button onClick={() => addProductToCart(product)}>
+  BUY NOW
+</button>
           </div>
         ))}
       </div>

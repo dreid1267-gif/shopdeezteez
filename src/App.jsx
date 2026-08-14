@@ -30,6 +30,19 @@ const [shirtColor, setShirtColor] = useState("Black");
   setCart([...cart, item]);
 };
 
+const addProductToCart = (product) => {
+  const item = {
+    name: product.name,
+    style: "standard",
+    size: "M",
+    color: "Black",
+    price: product.price,
+    image: product.image,
+  };
+
+  setCart([...cart, item]);
+};
+
   const signatureImage =
     shirtStyle === "front-only"
       ? "/images/blessed-front-only.png"
@@ -175,6 +188,7 @@ const products = [
   shirtColor={shirtColor}
   setShirtColor={setShirtColor}
   addSignatureToCart={addSignatureToCart}
+  addProductToCart={addProductToCart}
   products={products}
 />  
  <About />     
