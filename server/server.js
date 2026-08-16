@@ -13,6 +13,37 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
 app.use(cors());
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    const signature = req.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (error) {
+      console.error("Webhook signature error:", error.message);
+      return res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+
+      console.log("✅ PAYMENT COMPLETED");
+      console.log("Customer email:", session.customer_details?.email);
+      console.log("Amount paid:", session.amount_total / 100);
+      console.log("Checkout session:", session.id);
+    }
+
+    res.json({ received: true });
+  }
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
