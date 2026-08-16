@@ -16,7 +16,7 @@ app.use(cors());
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  (req, res) => {
+  async (req, res) => {
     const signature = req.headers["stripe-signature"];
 
     let event;
@@ -33,13 +33,36 @@ app.post(
     }
 
     if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+  const session = event.data.object;
 
-      console.log("✅ PAYMENT COMPLETED");
-      console.log("Customer email:", session.customer_details?.email);
-      console.log("Amount paid:", session.amount_total / 100);
-      console.log("Checkout session:", session.id);
-    }
+ const lineItems = await stripe.checkout.sessions.listLineItems(
+  session.id,
+  {
+    limit: 100,
+    expand: ["data.price.product"],
+  }
+);
+
+console.log("✅ PAYMENT COMPLETED");
+console.log("Customer email:", session.customer_details?.email);
+console.log("Amount paid:", session.amount_total / 100);
+
+lineItems.data.forEach((item) => {
+  const product = item.price?.product;
+  const metadata = product?.metadata || {};
+
+  console.log("--------------------");
+  console.log("Product:", item.description);
+  console.log("Style:", metadata.style);
+  console.log("Size:", metadata.size);
+  console.log("Color:", metadata.color);
+  console.log("Quantity:", item.quantity);
+  console.log("Amount:", item.amount_total / 100);
+});
+  
+
+  console.log("Checkout session:", session.id);
+}
 
     res.json({ received: true });
   }
@@ -57,10 +80,15 @@ app.post("/create-checkout-session", async (req, res) => {
      line_items: req.body.cart.map((item) => ({
   price_data: {
     currency: "usd",
-    product_data: {
-      name: item.name,
-      description: `${item.style} | Size: ${item.size} | Color: ${item.color}`,
-    },
+   product_data: {
+  name: item.name,
+  description: `${item.style} | Size: ${item.size} | Color: ${item.color}`,
+  metadata: {
+    style: item.style,
+    size: item.size,
+    color: item.color,
+  },
+}, 
     unit_amount: Math.round(
       Number(item.price.replace("$", "")) * 100
     ),
