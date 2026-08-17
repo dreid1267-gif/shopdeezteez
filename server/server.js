@@ -1,8 +1,13 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Stripe from "stripe";
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ordersFile = path.join(__dirname, "orders.json");
 dotenv.config();
 console.log(
   "Stripe key loaded:",
@@ -59,12 +64,58 @@ lineItems.data.forEach((item) => {
   console.log("Quantity:", item.quantity);
   console.log("Amount:", item.amount_total / 100);
 });
-  
 
-  console.log("Checkout session:", session.id);
+const order = {
+  sessionId: session.id,
+  customerEmail: session.customer_details?.email,
+  amountPaid: session.amount_total / 100,
+  createdAt: new Date().toISOString(),
+  items: lineItems.data.map((item) => {
+    const product = item.price?.product;
+    const metadata = product?.metadata || {};
+
+    return {
+      product: item.description,
+      style: metadata.style,
+      size: metadata.size,
+      color: metadata.color,
+      quantity: item.quantity,
+      amount: item.amount_total / 100,
+    };
+  }),
+};
+
+let orders = [];
+
+if (fs.existsSync(ordersFile)) {
+  const existing = fs.readFileSync(ordersFile, "utf8");
+
+  if (existing.trim()) {
+    orders = JSON.parse(existing);
+  }
 }
 
-    res.json({ received: true });
+const alreadySaved = orders.some(
+  (existingOrder) => existingOrder.sessionId === session.id
+);
+
+if (!alreadySaved) {
+  orders.push(order);
+
+  fs.writeFileSync(
+    ordersFile,
+    JSON.stringify(orders, null, 2)
+  );
+
+  console.log("✅ Order saved to orders.json");
+} else {
+  console.log("ℹ️ Order already saved — skipping duplicate");
+}
+
+console.log("Checkout session:", session.id);
+}
+
+res.json({ received: true });
   }
 );
 app.use(express.json());
