@@ -1,3 +1,5 @@
+import AdminPage from "./components/AdminPage.jsx";
+import OrdersDashboard from "./components/OrdersDashboard.jsx";
 import Footer from "./components/Footer.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
@@ -17,6 +19,8 @@ const [shirtColor, setShirtColor] = useState("Black");
  
  const checkoutSuccess =
   new URLSearchParams(window.location.search).get("checkout") === "success";
+  const isAdmin =
+  window.location.pathname === "/admin";
  const addSignatureToCart = () => {
   const item = {
     name: "BLESSED & HIGHLY FLAVORED!!!",
@@ -77,6 +81,10 @@ const products = [
 
   return (
     <div className="app" id="home">
+      {isAdmin ? (
+  <AdminPage />
+) : (
+  <>
      <Navbar
   cartCount={cart.length}
   onCartClick={() => setIsCartOpen(!isCartOpen)}
@@ -198,6 +206,8 @@ const products = [
 <Newsletter />
 
 <Footer />
+      </>
+    )}
     </div>
   );
 }

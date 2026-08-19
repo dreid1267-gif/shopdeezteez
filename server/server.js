@@ -13,6 +13,10 @@ console.log(
   "Stripe key loaded:",
   Boolean(process.env.STRIPE_SECRET_KEY)
 );
+console.log(
+  "Admin password loaded:",
+  Boolean(process.env.ADMIN_PASSWORD)
+);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
@@ -123,29 +127,63 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Deez Teez server is running!");
 });
+
+app.get("/orders", (req, res) => {
+  try {
+    if (!fs.existsSync(ordersFile)) {
+      return res.json([]);
+    }
+
+    const existing = fs.readFileSync(ordersFile, "utf8");
+
+    if (!existing.trim()) {
+      return res.json([]);
+    }
+
+    const orders = JSON.parse(existing);
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Unable to read orders:", error);
+    res.status(500).json({ error: "Unable to load orders" });
+  }
+});
+app.post("/admin-login", (req, res) => {
+  const { password } = req.body;
+
+   if (password === process.env.ADMIN_PASSWORD) {
+    return res.json({ success: true });
+  }
+
+  res.status(401).json({ success: false });
+});
+
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
 
-     line_items: req.body.cart.map((item) => ({
-  price_data: {
-    currency: "usd",
-   product_data: {
-  name: item.name,
-  description: `${item.style} | Size: ${item.size} | Color: ${item.color}`,
-  metadata: {
-    style: item.style,
-    size: item.size,
-    color: item.color,
-  },
-}, 
-    unit_amount: Math.round(
-      Number(item.price.replace("$", "")) * 100
-    ),
-  },
-  quantity: 1,
-})),
+      line_items: req.body.cart.map((item) => ({
+        price_data: {
+          currency: "usd",
+
+          product_data: {
+            name: item.name,
+            description: `${item.style} | Size: ${item.size} | Color: ${item.color}`,
+            metadata: {
+              style: item.style,
+              size: item.size,
+              color: item.color,
+            },
+          },
+
+          unit_amount: Math.round(
+            Number(item.price.replace("$", "")) * 100
+          ),
+        },
+
+        quantity: 1,
+      })),
 
       success_url: "http://localhost:5173/?checkout=success",
       cancel_url: "http://localhost:5173/?checkout=cancelled",
@@ -154,7 +192,29 @@ app.post("/create-checkout-session", async (req, res) => {
     res.json({ url: session.url });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Unable to create checkout session" });
+    res.status(500).json({
+      error: "Unable to create checkout session",
+    });
+  }
+  });
+app.get("/orders", (req, res) => {
+  try {
+    if (!fs.existsSync(ordersFile)) {
+      return res.json([]);
+    }
+
+    const existing = fs.readFileSync(ordersFile, "utf8");
+
+    if (!existing.trim()) {
+      return res.json([]);
+    }
+
+    const orders = JSON.parse(existing);
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Unable to read orders:", error);
+    res.status(500).json({ error: "Unable to load orders" });
   }
 });
 
