@@ -20,11 +20,15 @@ function AdminPage() {
       });
 
       if (response.ok) {
-        setIsLoggedIn(true);
-        setPassword("");
-      } else {
-        setError("Incorrect password.");
-      }
+  const data = await response.json();
+
+  sessionStorage.setItem("adminToken", data.token);
+
+  setIsLoggedIn(true);
+  setPassword("");
+} else {
+  setError("Incorrect password.");
+}
     } catch (error) {
       console.error("Admin login error:", error);
       setError("Unable to connect to admin login.");

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,6 +21,7 @@ console.log(
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
+const adminTokens = new Set();
 
 app.use(cors());
 app.post(
@@ -124,11 +126,19 @@ res.json({ received: true });
 );
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Deez Teez server is running!");
-});
-
 app.get("/orders", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+
+  if (!adminTokens.has(token)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     if (!fs.existsSync(ordersFile)) {
       return res.json([]);
@@ -151,8 +161,15 @@ app.get("/orders", (req, res) => {
 app.post("/admin-login", (req, res) => {
   const { password } = req.body;
 
-   if (password === process.env.ADMIN_PASSWORD) {
-    return res.json({ success: true });
+  if (password === process.env.ADMIN_PASSWORD) {
+    const token = crypto.randomUUID();
+
+    adminTokens.add(token);
+
+    return res.json({
+      success: true,
+      token,
+    });
   }
 
   res.status(401).json({ success: false });
@@ -198,6 +215,18 @@ app.post("/create-checkout-session", async (req, res) => {
   }
   });
 app.get("/orders", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+
+  if (!adminTokens.has(token)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     if (!fs.existsSync(ordersFile)) {
       return res.json([]);
@@ -218,6 +247,7 @@ app.get("/orders", (req, res) => {
   }
 });
 
+    
 const PORT = 4242;
 
 app.listen(PORT, () => {

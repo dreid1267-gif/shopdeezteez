@@ -5,7 +5,11 @@ function OrdersDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:4242/orders")
+   fetch("http://localhost:4242/orders", {
+  headers: {
+    Authorization: `Bearer ${sessionStorage.getItem("adminToken")}`,
+  },
+}) 
       .then((response) => response.json())
       .then((data) => {
         setOrders(data);
