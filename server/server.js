@@ -94,9 +94,7 @@ const order = {
 };
 
 let orders = [];
-if (!fs.existsSync(ordersFile)) {
-  return res.json([]);
-}
+
 if (fs.existsSync(ordersFile)) {
   
   const existing = fs.readFileSync(ordersFile, "utf8");
