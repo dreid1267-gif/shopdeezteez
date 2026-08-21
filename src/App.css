@@ -742,4 +742,110 @@ button:hover {
 .admin-error {
   color: #ff6b6b !important;
   margin-top: 15px;
+}/* ADMIN ORDERS DASHBOARD */
+
+.admin-dashboard {
+  width: calc(100% - 40px);
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 60px 20px;
+  box-sizing: border-box;
+  color: white;
+}
+
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #333;
+}
+
+.admin-dashboard-header h2 {
+  margin: 5px 0 0;
+  color: #d4af37;
+  font-size: 36px;
+  letter-spacing: 3px;
+}
+
+.admin-dashboard-header p {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+  letter-spacing: 3px;
+}
+
+.admin-dashboard-header > div:last-child {
+  display: flex;
+  gap: 15px;
+}
+
+.admin-dashboard-header button {
+  margin: 0;
+  padding: 13px 25px;
+}
+
+.admin-orders-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.admin-order-card {
+  min-width: 0;
+  padding: 25px;
+  background: #151515;
+  border: 1px solid #333;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.admin-order-card h3 {
+  margin-top: 0;
+  color: #d4af37;
+  overflow-wrap: anywhere;
+}
+
+.admin-order-card p {
+  margin: 12px 0;
+  font-size: 16px;
+  text-align: left;
+}
+
+.admin-order-card details {
+  margin-top: 20px;
+}
+
+.admin-order-card summary {
+  color: #d4af37;
+  cursor: pointer;
+}
+
+.admin-order-card pre {
+  max-width: 100%;
+  padding: 15px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #090909;
+  color: #ddd;
+  border-radius: 8px;
+}
+
+@media (max-width: 750px) {
+  .admin-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-dashboard-header > div:last-child {
+    flex-wrap: wrap;
+  }
+
+  .admin-orders-list {
+    grid-template-columns: 1fr;
+  }
 }

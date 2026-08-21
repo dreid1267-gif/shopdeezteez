@@ -9,7 +9,9 @@ import Stripe from "stripe";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ordersFile = path.join(__dirname, "orders.json");
-dotenv.config();
+dotenv.config({
+  path: path.join(__dirname, ".env"),
+});
 console.log(
   "Stripe key loaded:",
   Boolean(process.env.STRIPE_SECRET_KEY)
@@ -157,11 +159,18 @@ app.get("/orders", (req, res) => {
     console.error("Unable to read orders:", error);
     res.status(500).json({ error: "Unable to load orders" });
   }
-});
-app.post("/admin-login", (req, res) => {
-  const { password } = req.body;
 
-  if (password === process.env.ADMIN_PASSWORD) {
+
+  });
+
+app.post("/admin-login", (req, res) => {
+    const { password } = req.body;
+
+  const enteredPassword = String(password ?? "").trim();
+  const savedPassword = String(process.env.ADMIN_PASSWORD ?? "").trim();
+  
+
+  if (enteredPassword === savedPassword) {
     const token = crypto.randomUUID();
 
     adminTokens.add(token);
@@ -172,9 +181,28 @@ app.post("/admin-login", (req, res) => {
     });
   }
 
-  res.status(401).json({ success: false });
+  return res.status(401).json({
+    success: false,
+  });
 });
 
+app.post("/admin-logout", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+    });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+
+  adminTokens.delete(token);
+
+  return res.json({
+    success: true,
+  });
+});
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
