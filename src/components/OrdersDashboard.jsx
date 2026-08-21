@@ -5,7 +5,7 @@ function OrdersDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   fetch("http://localhost:4242/orders", {
+   fetch("https://shopdeezteez-api.onrender.com/orders", {
   headers: {
     Authorization: `Bearer ${sessionStorage.getItem("adminToken")}`,
   },

@@ -156,7 +156,7 @@ const products = [
   onClick={async () => {
     try {
       const response = await fetch(
-        "http://localhost:4242/create-checkout-session",
+        "https://shopdeezteez-api.onrender.com/create-checkout-session",
         {
           method: "POST",
           headers: {
