@@ -6,6 +6,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Stripe from "stripe";
+import pg from "pg";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ordersFile = path.join(__dirname, "orders.json");
@@ -16,6 +17,11 @@ console.log(
   "Stripe key loaded:",
   Boolean(process.env.STRIPE_SECRET_KEY)
 );
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 console.log(
   "Admin password loaded:",
   Boolean(process.env.ADMIN_PASSWORD)
@@ -131,7 +137,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Deez Teez server is running!");
 });
-app.get("/orders", (req, res) => {
+app.get("/orders", async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -145,27 +151,24 @@ app.get("/orders", (req, res) => {
   }
 
   try {
-    if (!fs.existsSync(ordersFile)) {
-      return res.json([]);
-    }
+    const result = await pool.query(`
+      SELECT
+        session_id AS "sessionId",
+        customer_email AS "customerEmail",
+        amount_paid::float8 AS "amountPaid",
+        status,
+        created_at AS "createdAt",
+        items
+      FROM orders
+      ORDER BY created_at DESC
+    `);
 
-    const existing = fs.readFileSync(ordersFile, "utf8");
-
-    if (!existing.trim()) {
-      return res.json([]);
-    }
-
-    const orders = JSON.parse(existing);
-
-    res.json(orders);
+    return res.json(result.rows);
   } catch (error) {
-    console.error("Unable to read orders:", error);
-    res.status(500).json({ error: "Unable to load orders" });
+    console.error("Unable to read database orders:", error);
+    return res.status(500).json({ error: "Unable to load orders" });
   }
-
-
-  });
-
+});
 app.post("/admin-login", (req, res) => {
     const { password } = req.body;
 
