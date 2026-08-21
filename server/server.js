@@ -127,7 +127,9 @@ res.json({ received: true });
   }
 );
 app.use(express.json());
-
+app.get("/", (req, res) => {
+  res.send("Deez Teez server is running!");
+});
 app.get("/orders", (req, res) => {
   const authHeader = req.headers.authorization;
 
@@ -276,7 +278,7 @@ app.get("/orders", (req, res) => {
 });
 
     
-const PORT = 4242;
+const PORT = process.env.PORT || 4242;
 
 app.listen(PORT, () => {
   console.log(`Deez Teez server running on port ${PORT}`);
