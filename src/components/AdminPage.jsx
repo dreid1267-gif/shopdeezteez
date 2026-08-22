@@ -20,9 +20,17 @@ function AdminPage() {
         },
       });
 
-      if (!response.ok) {
-        throw new Error("Unable to load orders");
-      }
+      if (response.status === 401) {
+  sessionStorage.removeItem("adminToken");
+  setIsLoggedIn(false);
+  setOrders([]);
+  setError("");
+  return;
+}
+
+if (!response.ok) {
+  throw new Error("Unable to load orders");
+}
 
       const data = await response.json();
       setOrders(Array.isArray(data) ? data : []);
