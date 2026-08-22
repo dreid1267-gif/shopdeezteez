@@ -22,6 +22,8 @@ const { Pool } = pg;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+const FRONTEND_URL =
+  process.env.FRONTEND_URL || "http://localhost:5173";
 console.log(
   "Database URL loaded:",
   Boolean(process.env.DATABASE_URL)
@@ -244,8 +246,8 @@ app.post("/create-checkout-session", async (req, res) => {
         quantity: 1,
       })),
 
-      success_url: "http://localhost:5173/?checkout=success",
-      cancel_url: "http://localhost:5173/?checkout=cancelled",
+      success_url: `${FRONTEND_URL}/?checkout=success`,
+cancel_url: `${FRONTEND_URL}/?checkout=cancelled`,
     });
 
     res.json({ url: session.url });
