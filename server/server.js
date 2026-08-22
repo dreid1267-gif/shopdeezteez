@@ -23,6 +23,12 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 console.log(
+  "Database URL loaded:",
+  Boolean(process.env.DATABASE_URL)
+);
+
+console.log("Order storage: Neon database");
+console.log(
   "Admin password loaded:",
   Boolean(process.env.ADMIN_PASSWORD)
 );
@@ -99,32 +105,34 @@ const order = {
   }),
 };
 
-let orders = [];
-
-if (fs.existsSync(ordersFile)) {
-  
-  const existing = fs.readFileSync(ordersFile, "utf8");
-
-  if (existing.trim()) {
-    orders = JSON.parse(existing);
-  }
-}
-
-const alreadySaved = orders.some(
-  (existingOrder) => existingOrder.sessionId === session.id
+const saveResult = await pool.query(
+  `
+    INSERT INTO orders (
+      session_id,
+      customer_email,
+      amount_paid,
+      status,
+      created_at,
+      items
+    )
+    VALUES ($1, $2, $3, $4, $5, $6::jsonb)
+    ON CONFLICT (session_id) DO NOTHING
+    RETURNING session_id
+  `,
+  [
+    order.sessionId,
+    order.customerEmail,
+    order.amountPaid,
+    "Received",
+    order.createdAt,
+    JSON.stringify(order.items),
+  ]
 );
 
-if (!alreadySaved) {
-  orders.push(order);
-
-  fs.writeFileSync(
-    ordersFile,
-    JSON.stringify(orders, null, 2)
-  );
-
-  console.log("✅ Order saved to orders.json");
+if (saveResult.rowCount > 0) {
+  console.log("✅ Order saved permanently to Neon");
 } else {
-  console.log("ℹ️ Order already saved — skipping duplicate");
+  console.log("ℹ️ Order already exists — skipping duplicate");
 }
 
 console.log("Checkout session:", session.id);
