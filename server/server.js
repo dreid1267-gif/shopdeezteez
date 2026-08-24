@@ -116,7 +116,7 @@ const matchingVariant = productDetails.sync_variants.find((variant) => {
 
   return (
     variantName.includes(` ${requestedColor} `) &&
-    variantName.endsWith(` ${requestedSize} `)
+    variantName.includes(` ${requestedSize} `)
   );
 });
 
