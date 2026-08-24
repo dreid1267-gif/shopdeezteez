@@ -239,16 +239,19 @@ app.get("/orders", async (req, res) => {
 
   try {
     const result = await pool.query(`
-      SELECT
-        session_id AS "sessionId",
-        customer_email AS "customerEmail",
-        amount_paid::float8 AS "amountPaid",
-        status,
-        created_at AS "createdAt",
-        items
-      FROM orders
-      ORDER BY created_at DESC
-    `);
+  SELECT
+    session_id AS "sessionId",
+    customer_email AS "customerEmail",
+    customer_name AS "customerName",
+    customer_phone AS "customerPhone",
+    shipping_address AS "shippingAddress",
+    amount_paid::float8 AS "amountPaid",
+    status,
+    created_at AS "createdAt",
+    items
+  FROM orders
+  ORDER BY created_at DESC
+`);
 
     return res.json(result.rows);
   } catch (error) {
