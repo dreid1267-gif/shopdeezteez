@@ -151,6 +151,36 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Deez Teez server is running!");
 });
+app.get("/printful-products", async (req, res) => {
+  try {
+    const response = await fetch(
+      "https://api.printful.com/store/products",
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PRINTFUL_API_TOKEN}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Printful products error:", data);
+
+      return res.status(response.status).json({
+        error: "Unable to load Printful products",
+      });
+    }
+
+    return res.json(data.result);
+  } catch (error) {
+    console.error("Printful products error:", error);
+
+    return res.status(500).json({
+      error: "Unable to load Printful products",
+    });
+  }
+});
 app.get("/orders", async (req, res) => {
   const authHeader = req.headers.authorization;
 
