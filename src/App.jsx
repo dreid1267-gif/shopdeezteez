@@ -7,7 +7,7 @@ import FeaturedCollection from "./components/FeaturedCollection.jsx";
 import About from "./components/About.jsx";
 import Benefits from "./components/Benefits.jsx";
 import Newsletter from "./components/Newsletter.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -16,6 +16,18 @@ const [shirtSize, setShirtSize] = useState("M");
 const [shirtColor, setShirtColor] = useState("Black");
  const [cart, setCart] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
+ const [printfulProducts, setPrintfulProducts] = useState([]);
+ useEffect(() => {
+  fetch("http://localhost:4242/printful-products")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Printful products:", data);
+      setPrintfulProducts(data);
+    })
+    .catch((error) => {
+      console.error("Error loading Printful products:", error);
+    });
+}, []);
  
  const checkoutSuccess =
   new URLSearchParams(window.location.search).get("checkout") === "success";
@@ -61,18 +73,21 @@ const products = [
     description: "Push beyond limits. Become unstoppable.",
     price: "$29.99",
     image: "/images/rise-above.png",
+    printfulProductId: 458804603,
   },
   {
     name: "NO EXCUSES",
     description: "Discipline creates greatness.",
     price: "$29.99",
     image: "/images/no-excuses.png",
+    printfulProductId: 458805178,
   },
   {
     name: "LEVEL UP",
     description: "Build the future you believe in.",
     price: "$29.99",
     image: "/images/level-up.png",
+    printfulProductId: 458802782,
   },
 ];
 

@@ -287,6 +287,13 @@ app.post("/create-checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+shipping_address_collection: {
+  allowed_countries: ["US"],
+},
+
+phone_number_collection: {
+  enabled: true,
+},
 
       line_items: req.body.cart.map((item) => ({
         price_data: {
@@ -360,4 +367,31 @@ const PORT = process.env.PORT || 4242;
 
 app.listen(PORT, () => {
   console.log(`Deez Teez server running on port ${PORT}`);
+});
+app.get("/printful-products", async (req, res) => {
+  try {
+    const response = await fetch("https://api.printful.com/store/products", {
+      headers: {
+        Authorization: `Bearer ${process.env.PRINTFUL_API_TOKEN}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Printful products error:", data);
+
+      return res.status(response.status).json({
+        error: "Unable to load Printful products",
+      });
+    }
+
+    return res.json(data.result);
+  } catch (error) {
+    console.error("Printful connection error:", error);
+
+    return res.status(500).json({
+      error: "Printful connection failed",
+    });
+  }
 });
