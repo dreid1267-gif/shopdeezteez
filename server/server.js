@@ -34,6 +34,10 @@ console.log(
   "Admin password loaded:",
   Boolean(process.env.ADMIN_PASSWORD)
 );
+console.log(
+  "Printful token loaded:",
+  Boolean(process.env.PRINTFUL_API_TOKEN)
+);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
