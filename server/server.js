@@ -90,10 +90,17 @@ lineItems.data.forEach((item) => {
   console.log("Quantity:", item.quantity);
   console.log("Amount:", item.amount_total / 100);
 });
-
+const shippingDetails =
+  session.collected_information?.shipping_details ??
+  session.shipping_details;
 const order = {
   sessionId: session.id,
   customerEmail: session.customer_details?.email,
+  customerName:
+  shippingDetails?.name ?? session.customer_details?.name ?? "",
+customerPhone: session.customer_details?.phone ?? "",
+shippingAddress:
+  shippingDetails?.address ?? session.customer_details?.address ?? null,
   amountPaid: session.amount_total / 100,
   createdAt: new Date().toISOString(),
   items: lineItems.data.map((item) => {
@@ -116,18 +123,24 @@ const saveResult = await pool.query(
     INSERT INTO orders (
       session_id,
       customer_email,
+      customer_name,
+      customer_phone,
+      shipping_address,
       amount_paid,
       status,
       created_at,
       items
     )
-    VALUES ($1, $2, $3, $4, $5, $6::jsonb)
+    VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, $9::jsonb)
     ON CONFLICT (session_id) DO NOTHING
     RETURNING session_id
   `,
   [
     order.sessionId,
     order.customerEmail,
+    order.customerName,
+    order.customerPhone,
+    JSON.stringify(order.shippingAddress),
     order.amountPaid,
     "Received",
     order.createdAt,
