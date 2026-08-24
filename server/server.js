@@ -179,6 +179,36 @@ app.get("/printful-products", async (req, res) => {
     return res.status(500).json({
       error: "Unable to load Printful products",
     });
+    app.get("/printful-products/:id", async (req, res) => {
+  try {
+    const response = await fetch(
+      `https://api.printful.com/store/products/${req.params.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PRINTFUL_API_TOKEN}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Printful product details error:", data);
+
+      return res.status(response.status).json({
+        error: "Unable to load Printful product details",
+      });
+    }
+
+    return res.json(data.result);
+  } catch (error) {
+    console.error("Printful product details error:", error);
+
+    return res.status(500).json({
+      error: "Unable to load Printful product details",
+    });
+  }
+});
   }
 });
 app.get("/orders", async (req, res) => {
