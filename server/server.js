@@ -44,6 +44,91 @@ const app = express();
 const adminTokens = new Set();
 
 app.use(cors());
+
+const printfulRequest = async (endpoint, options = {}) => {
+  const response = await fetch(
+    `https://api.printful.com${endpoint}`,
+    {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${process.env.PRINTFUL_API_TOKEN}`,
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error?.message || "Printful API request failed"
+    );
+  }
+
+  return data.result;
+};
+const normalizeText = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ");
+
+   const getPrintfulVariant = async (item) => {
+  const products = await printfulRequest("/store/products");
+
+  const itemName = normalizeText(item.product);
+  const itemStyle = normalizeText(item.style);
+
+  const matchingProduct = products.find((product) => {
+    const productName = normalizeText(product.name);
+
+    if (!productName.includes(itemName)) {
+      return false;
+    }
+
+    if (itemName.includes("blessed highly flavored")) {
+      if (itemStyle.includes("front back")) {
+        return productName.includes("front back");
+      }
+
+      return productName.includes("front only");
+    }
+
+    return true;
+  });
+
+  if (!matchingProduct) {
+    throw new Error(
+      `No matching Printful product found for ${item.product}`
+    );
+  }
+
+  const productDetails = await printfulRequest(
+    `/store/products/${matchingProduct.id}`
+  );
+
+  const requestedSize = normalizeText(item.size).trim();
+const requestedColor = normalizeText(item.color).trim();
+
+const matchingVariant = productDetails.sync_variants.find((variant) => {
+  const variantName = ` ${normalizeText(variant.name).trim()} `;
+
+  return (
+    variantName.includes(` ${requestedColor} `) &&
+    variantName.endsWith(` ${requestedSize} `)
+  );
+});
+
+  if (!matchingVariant) {
+    throw new Error(
+      `No matching Printful variant found for ${item.product}, ${item.size}, ${item.color}`
+    );
+  }
+
+  return matchingVariant;
+}; 
+
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
@@ -150,6 +235,50 @@ const saveResult = await pool.query(
 
 if (saveResult.rowCount > 0) {
   console.log("✅ Order saved permanently to Neon");
+
+  try {
+    const printfulItems = [];
+
+    for (const item of order.items) {
+      const variant = await getPrintfulVariant(item);
+
+      printfulItems.push({
+        sync_variant_id: variant.id,
+        quantity: item.quantity,
+      });
+    }
+
+    const address = order.shippingAddress || {};
+
+    const printfulOrder = await printfulRequest("/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        external_id: order.sessionId,
+        recipient: {
+          name: order.customerName,
+          email: order.customerEmail,
+          phone: order.customerPhone,
+          address1: address.line1,
+          address2: address.line2 || "",
+          city: address.city,
+          state_code: address.state,
+          country_code: address.country,
+          zip: address.postal_code,
+        },
+        items: printfulItems,
+      }),
+    });
+
+    console.log(
+      "✅ Printful draft order created:",
+      printfulOrder.id
+    );
+  } catch (printfulError) {
+    console.error(
+      "❌ Unable to create Printful draft order:",
+      printfulError
+    );
+  }
 } else {
   console.log("ℹ️ Order already exists — skipping duplicate");
 }
