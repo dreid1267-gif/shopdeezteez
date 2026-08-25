@@ -83,9 +83,12 @@ const normalizeText = (value) =>
   const matchingProduct = products.find((product) => {
     const productName = normalizeText(product.name);
 
-    if (!productName.includes(itemName)) {
-      return false;
-    }
+   const isBlessedProduct =
+  itemName.includes("blessed highly flavored");
+
+if (!isBlessedProduct && !productName.includes(itemName)) {
+  return false;
+} 
 
     if (itemName.includes("blessed highly flavored")) {
       if (itemStyle.includes("front back")) {
