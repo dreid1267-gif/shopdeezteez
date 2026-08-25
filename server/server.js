@@ -111,27 +111,33 @@ if (!isBlessedProduct && !productName.includes(itemName)) {
     `/store/products/${matchingProduct.id}`
   );
 
-  const requestedSize = normalizeText(item.size).trim();
-const requestedColor = normalizeText(item.color).trim();
-
-const matchingVariant = productDetails.sync_variants.find((variant) => {
-  const variantName = ` ${normalizeText(variant.name).trim()} `;
+  
+console.log(
+  "PRINTFUL VARIANTS:",
+  productDetails.sync_variants.map((variant) => ({
+    id: variant.id,
+    name: variant.name
+  }))
+);
+  const matchingVariant = productDetails.sync_variants.find((variant) => {
+  const variantWords = normalizeText(variant.name).split(" ");
+  const requestedSize = normalizeText(item.size);
+  const requestedColor = normalizeText(item.color);
 
   return (
-    variantName.includes(` ${requestedColor} `) &&
-    variantName.includes(` ${requestedSize} `)
+    variantWords.includes(requestedSize) &&
+    variantWords.includes(requestedColor)
   );
 });
 
-  if (!matchingVariant) {
-    throw new Error(
-      `No matching Printful variant found for ${item.product}, ${item.size}, ${item.color}`
-    );
-  }
+if (!matchingVariant) {
+  throw new Error(
+    `No matching Printful variant found for ${item.product}, ${item.size}, ${item.color}`
+  );
+}
 
-  return matchingVariant;
-}; 
-
+return matchingVariant;
+};
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
