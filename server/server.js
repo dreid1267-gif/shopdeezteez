@@ -122,12 +122,9 @@ console.log(
   const matchingVariant = productDetails.sync_variants.find((variant) => {
   const variantWords = normalizeText(variant.name).split(" ");
   const requestedSize = normalizeText(item.size);
-  const requestedColor = normalizeText(item.color);
+  
 
-  return (
-    variantWords.includes(requestedSize) &&
-    variantWords.includes(requestedColor)
-  );
+  return variantWords.includes(requestedSize);
 });
 
 if (!matchingVariant) {
