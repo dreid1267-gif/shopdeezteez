@@ -259,7 +259,7 @@ if (saveResult.rowCount > 0) {
     const printfulOrder = await printfulRequest("/orders", {
       method: "POST",
       body: JSON.stringify({
-        external_id: order.sessionId,
+        //external_id: order.sessionId,
         recipient: {
           name: order.customerName,
           email: order.customerEmail,
