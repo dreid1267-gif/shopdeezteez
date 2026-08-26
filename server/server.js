@@ -467,6 +467,18 @@ phone_number_collection: {
 
         quantity: 1,
       })),
+      shipping_options: [
+  {
+    shipping_rate_data: {
+      type: "fixed_amount",
+      fixed_amount: {
+        amount: 475,
+        currency: "usd",
+      },
+      display_name: "Standard Shipping",
+    },
+  },
+],
 
       success_url: `${FRONTEND_URL}/?checkout=success`,
 cancel_url: `${FRONTEND_URL}/?checkout=cancelled`,
