@@ -256,7 +256,7 @@ if (saveResult.rowCount > 0) {
 
     const address = order.shippingAddress || {};
 
-    const printfulOrder = await printfulRequest("/orders", {
+    const printfulOrder = await printfulRequest("/orders?confirm=1", {
       method: "POST",
       body: JSON.stringify({
         //external_id: order.sessionId,
